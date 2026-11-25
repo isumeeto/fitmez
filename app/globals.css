@@ -1,0 +1,335 @@
+@import "tailwindcss";
+
+@variant dark (&:where([data-theme="dark"], [data-theme="dark"] *, .dark, .dark *));
+
+:root {
+  color-scheme: dark;
+
+  /* Shared tokens */
+  --like:          #FF7A8A;
+  --danger:        #FF6B7A;
+  --success:       #5EE0A0;
+
+  /* Dark theme ("Matcha Noir" dark cream variant) default */
+  --bg:            #161811;
+  --bg-2:          #1D2017;
+  --surface:       #24291E;
+  --surface-2:     #2E3526;
+  --border:        rgba(156, 167, 99, 0.16);
+  --border-strong: rgba(156, 167, 99, 0.28);
+  --text:          #F4F0E1;
+  --text-muted:    #ACB694;
+  --text-subtle:   #778163;
+  --accent:        #9CA763;                 /* Matcha */
+  --accent-soft:   #B5C17F;
+  --accent-deep:   #7F8A4B;                 /* pressed */
+  --accent-tint:   rgba(156, 167, 99, 0.16);  /* selected backgrounds */
+  --accent-line:   rgba(156, 167, 99, 0.40);  /* selected borders, focus ring */
+  --accent-glow:   rgba(156, 167, 99, 0.32);
+  --on-accent:     #161811;                 /* text/icons on matcha fills */
+  --btn-bg:        #9CA763;
+  --btn-fg:        #161811;
+  --bubble:        #9CA763;
+  --on-bubble:     #161811;
+  --glass-rgb:     36, 41, 30;
+  --grad-brand:    linear-gradient(135deg, #9CA763, #7F8A4B);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg:            #161811;
+  --bg-2:          #1D2017;
+  --surface:       #24291E;
+  --surface-2:     #2E3526;
+  --border:        rgba(156, 167, 99, 0.16);
+  --border-strong: rgba(156, 167, 99, 0.28);
+  --text:          #F4F0E1;
+  --text-muted:    #ACB694;
+  --text-subtle:   #778163;
+  --accent:        #9CA763;
+  --accent-soft:   #B5C17F;
+  --accent-deep:   #7F8A4B;
+  --accent-tint:   rgba(156, 167, 99, 0.16);
+  --accent-line:   rgba(156, 167, 99, 0.40);
+  --accent-glow:   rgba(156, 167, 99, 0.32);
+  --on-accent:     #161811;
+  --btn-bg:        #9CA763;
+  --btn-fg:        #161811;
+  --bubble:        #9CA763;
+  --on-bubble:     #161811;
+  --glass-rgb:     36, 41, 30;
+  --grad-brand:    linear-gradient(135deg, #9CA763, #7F8A4B);
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+  --bg:            #F1E8C7;                 /* Milk Honey */
+  --bg-2:          #E7DDB8;
+  --surface:       #FAF5E4;
+  --surface-2:     #EDE2BF;
+  --border:        rgba(70, 77, 36, 0.12);
+  --border-strong: rgba(70, 77, 36, 0.22);
+  --text:          #242B18;
+  --text-muted:    #5C6645;
+  --text-subtle:   #828D69;
+  --accent:        #7D8B45;                 /* Matcha olive with high contrast on Milk Honey */
+  --accent-soft:   #9CA763;
+  --accent-deep:   #687434;
+  --accent-tint:   rgba(156, 167, 99, 0.20);
+  --accent-line:   rgba(125, 139, 69, 0.45);
+  --accent-glow:   rgba(156, 167, 99, 0.45);
+  --on-accent:     #FAF5E4;
+  --btn-bg:        #9CA763;
+  --btn-fg:        #1C2312;
+  --bubble:        #9CA763;
+  --on-bubble:     #1C2312;
+  --glass-rgb:     241, 232, 199;
+  --grad-brand:    linear-gradient(135deg, #9CA763, #7D8B45);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-2: var(--bg-2);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-text-subtle: var(--text-subtle);
+
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-deep: var(--accent-deep);
+  --color-accent-tint: var(--accent-tint);
+  --color-accent-line: var(--accent-line);
+  --color-accent-glow: var(--accent-glow);
+  --color-on-accent: var(--on-accent);
+
+  --color-btn-bg: var(--btn-bg);
+  --color-btn-fg: var(--btn-fg);
+  --color-bubble: var(--bubble);
+  --color-on-bubble: var(--on-bubble);
+
+  --color-like: var(--like);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+
+  --font-display: var(--font-bricolage), sans-serif;
+  --font-sans: var(--font-jakarta), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-brand: var(--font-brand);
+  --font-brand-mystique: var(--font-brand-mystique), serif;
+  --font-brand-legacy: var(--font-brand-legacy), serif;
+
+  --radius-3xl: 28px;
+  --radius-2xl: 22px;
+  --radius-xl: 16px;
+}
+
+:root {
+  --font-brand: var(--font-brand-mystique), serif;
+}
+
+[data-brand-font="legacy"] {
+  --font-brand: var(--font-brand-legacy), serif;
+}
+
+[data-brand-font="mystique"] {
+  --font-brand: var(--font-brand-mystique), serif;
+}
+
+.font-brand {
+  font-family: var(--font-brand);
+}
+
+.font-brand-mystique {
+  font-family: var(--font-brand-mystique), serif;
+}
+
+.font-brand-legacy {
+  font-family: var(--font-brand-legacy), serif;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Thick Frosted Glass */
+.glass {
+  position: relative;
+  background: linear-gradient(
+    135deg,
+    rgba(var(--glass-rgb), 0.65),
+    rgba(var(--glass-rgb), 0.45)
+  );
+  backdrop-filter: blur(36px) saturate(170%) brightness(1.04);
+  -webkit-backdrop-filter: blur(36px) saturate(170%) brightness(1.04);
+  box-shadow:
+    0 18px 40px -12px rgba(22, 24, 17, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.10),
+    inset 0 0 24px rgba(255, 255, 255, 0.05);
+  transform: translateZ(0);
+}
+
+/* 1px specular gradient edge: bright top-left fading to subtle bottom-right */
+.glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.55),
+    rgba(255, 255, 255, 0.05) 45%,
+    rgba(255, 255, 255, 0.18)
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Subtle frosted grain overlay */
+.glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Ensure glass pills always have seamless 9999px rounded edges on all layers */
+.glass.rounded-full,
+.glass.rounded-full::before,
+.glass.rounded-full::after {
+  border-radius: 9999px !important;
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .glass {
+    background: rgba(var(--glass-rgb), 0.94);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(var(--glass-rgb), 0.97);
+  }
+}
+
+/* AI gradient border */
+.ai-gradient-border {
+  border: 1px solid transparent;
+  background: linear-gradient(var(--surface), var(--surface)) padding-box,
+              linear-gradient(135deg, var(--accent), var(--accent-deep)) border-box;
+}
+
+/* Input carets */
+input,
+textarea {
+  caret-color: var(--accent);
+}
+
+/* Interactive touch feedback */
+.touch-press {
+  transition: transform 140ms ease-out, opacity 140ms ease-out;
+}
+.touch-press:active {
+  transform: scale(0.97);
+}
+
+/* Hide scrollbars */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Shimmer animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--surface) 0%,
+    var(--accent-tint) 50%,
+    var(--surface) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite ease-in-out;
+}
+
+/* View transitions */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 220ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+
+  /* Instant reveal — no animation for menu or nav transitions */
+  [data-framer-motion-reduce] {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* Smooth, non-bouncing Apple ease for overlays & UI elements */
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: overlayFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity, transform;
+}
+
+/* Premium color swatch hover glow — smooth non-bouncing Apple ease */
+.swatch-glow {
+  will-change: transform, box-shadow;
+  transition: opacity 0.2s ease-out, transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+/* PostActionsMenu item row hover background */
+.menu-item-row {
+  border-radius: 14px;
+  transition: background-color 0.2s ease-out, opacity 0.2s ease-out;
+}
+.menu-item-row:hover {
+  background-color: var(--accent-tint);
+}
+.menu-item-row:active {
+  opacity: 0.85;
+}

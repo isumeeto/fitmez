@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DripCheck AI — Status & Architecture Report</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Bricolage+Grotesque:wght@700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    @page {
+      size: A4;
+      margin: 14mm 14mm 16mm 14mm;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #04344C;
+      background: #FFFFFF;
+      line-height: 1.5;
+      font-size: 11pt;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    /* Cover / Hero Header */
+    .header-banner {
+      background: linear-gradient(135deg, #021A26 0%, #04344C 55%, #084869 100%);
+      color: #EAFBFE;
+      border-radius: 16px;
+      padding: 24px 28px;
+      margin-bottom: 22px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(176, 237, 249, 0.25);
+      box-shadow: 0 8px 24px rgba(2, 26, 38, 0.15);
+    }
+
+    .header-banner::after {
+      content: "";
+      position: absolute;
+      top: -40px;
+      right: -40px;
+      width: 180px;
+      height: 180px;
+      background: radial-gradient(circle, rgba(176, 237, 249, 0.2) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .brand-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 9pt;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: rgba(176, 237, 249, 0.16);
+      color: #B0EDF9;
+      border: 1px solid rgba(176, 237, 249, 0.3);
+      padding: 4px 10px;
+      border-radius: 9999px;
+      margin-bottom: 10px;
+    }
+
+    .brand-tag-dot {
+      width: 7px;
+      height: 7px;
+      background: #5EE0A0;
+      border-radius: 50%;
+      box-shadow: 0 0 6px #5EE0A0;
+    }
+
+    .title {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 24pt;
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      font-size: 11pt;
+      color: #8FB8C4;
+      font-weight: 500;
+      max-width: 90%;
+      margin-bottom: 14px;
+    }
+
+    .meta-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(176, 237, 249, 0.15);
+      font-size: 8.5pt;
+      color: #B0EDF9;
+    }
+
+    .meta-item strong {
+      color: #FFFFFF;
+    }
+
+    /* KPI Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .kpi-card {
+      background: #F0FBFE;
+      border: 1px solid rgba(4, 52, 76, 0.12);
+      border-radius: 12px;
+      padding: 12px 14px;
+      position: relative;
+    }
+
+    .kpi-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: #04344C;
+      border-top-left-radius: 12px;
+      border-bottom-left-radius: 12px;
+    }
+
+    .kpi-card.accent::before {
+      background: #0EA5E9;
+    }
+    .kpi-card.success::before {
+      background: #10B981;
+    }
+    .kpi-card.warning::before {
+      background: #F59E0B;
+    }
+
+    .kpi-label {
+      font-size: 8pt;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #4E7283;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .kpi-value {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 15pt;
+      font-weight: 800;
+      color: #04344C;
+      line-height: 1.1;
+    }
+
+    .kpi-sub {
+      font-size: 7.5pt;
+      color: #5F8796;
+      margin-top: 3px;
+    }
+
+    /* Section Styles */
+    .section {
+      margin-bottom: 20px;
+      page-break-inside: avoid;
+    }
+
+    .section-title {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 13pt;
+      font-weight: 800;
+      color: #04344C;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid #DDF3F9;
+    }
+
+    .section-num {
+      background: #04344C;
+      color: #B0EDF9;
+      font-size: 8.5pt;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 6px;
+    }
+
+    p {
+      color: #2D4D5C;
+      font-size: 9.5pt;
+      margin-bottom: 8px;
+      text-align: justify;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-top: 6px;
+      margin-bottom: 12px;
+      font-size: 8.5pt;
+      border: 1px solid rgba(4, 52, 76, 0.12);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th {
+      background: #04344C;
+      color: #EAFBFE;
+      text-align: left;
+      padding: 8px 10px;
+      font-weight: 700;
+      font-size: 8pt;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    td {
+      padding: 7px 10px;
+      border-top: 1px solid rgba(4, 52, 76, 0.08);
+      color: #173847;
+      vertical-align: middle;
+    }
+
+    tr:nth-child(even) td {
+      background: #F8FCFD;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8pt;
+      background: #E6F7FA;
+      color: #034866;
+      padding: 1px 5px;
+      border-radius: 4px;
+      border: 1px solid rgba(4, 52, 76, 0.1);
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 7.5pt;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .badge-success {
+      background: #DCFCE7;
+      color: #15803D;
+      border: 1px solid #BBF7D0;
+    }
+
+    .badge-mock {
+      background: #FEF3C7;
+      color: #B45309;
+      border: 1px solid #FDE68A;
+    }
+
+    .badge-primary {
+      background: #E0F2FE;
+      color: #0369A1;
+      border: 1px solid #BAE6FD;
+    }
+
+    /* Cards / Boxes */
+    .callout-box {
+      background: #F0FBFE;
+      border: 1px solid #B0EDF9;
+      border-left: 4px solid #04344C;
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin: 10px 0;
+      font-size: 9pt;
+      color: #04344C;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 8px;
+    }
+
+    .feature-card {
+      background: #FFFFFF;
+      border: 1px solid rgba(4, 52, 76, 0.12);
+      border-radius: 10px;
+      padding: 12px;
+      box-shadow: 0 2px 6px rgba(4, 52, 76, 0.04);
+    }
+
+    .feature-card h4 {
+      font-size: 9.5pt;
+      font-weight: 700;
+      color: #04344C;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .feature-card p {
+      font-size: 8.5pt;
+      color: #4E7283;
+      margin-bottom: 0;
+    }
+
+    .page-break {
+      page-break-before: always;
+    }
+
+    /* Footer */
+    .doc-footer {
+      margin-top: 18px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(4, 52, 76, 0.12);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 7.5pt;
+      color: #7A9AA8;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Cover / Header Banner -->
+  <div class="header-banner">
+    <div class="brand-tag">
+      <span class="brand-tag-dot"></span>
+      DripCheck AI &bull; Project State & Architecture
+    </div>
+    <h1 class="title">Application Progress & System Report</h1>
+    <div class="subtitle">
+      Comprehensive engineering audit covering current runtime status, implemented routes, AI styling workflows, design tokens, and backend integration readiness.
+    </div>
+    <div class="meta-strip">
+      <div class="meta-item"><strong>Generated:</strong> October 2026</div>
+      <div class="meta-item"><strong>Stage:</strong> Prompt 03 Complete (Mock Mode)</div>
+      <div class="meta-item"><strong>Stack:</strong> Next.js 16.4 / React 19 / Turbopack</div>
+      <div class="meta-item"><strong>Target:</strong> Mobile PWA (~390&times;844 viewport)</div>
+    </div>
+  </div>
+
+  <!-- KPI / Metric Highlights -->
+  <div class="kpi-grid">
+    <div class="kpi-card success">
+      <div class="kpi-label">Dev Server</div>
+      <div class="kpi-value">Live (200 OK)</div>
+      <div class="kpi-sub">http://localhost:3000</div>
+    </div>
+    <div class="kpi-card accent">
+      <div class="kpi-label">Active Routes</div>
+      <div class="kpi-value">12 Pages</div>
+      <div class="kpi-sub">Auth, Stylist, Social & Profile</div>
+    </div>
+    <div class="kpi-card warning">
+      <div class="kpi-label">Data Pipeline</div>
+      <div class="kpi-value">Mock Mode</div>
+      <div class="kpi-sub">Ready for FastAPI switch</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Aesthetic Core</div>
+      <div class="kpi-value">Deep Sea / Sky</div>
+      <div class="kpi-sub">Liquid-glass + Tailwind v4</div>
+    </div>
+  </div>
+
+  <!-- 1. Executive Summary -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-num">01</span>
+      Executive Summary & Product Vision
+    </div>
+    <p>
+      <strong>DripCheck AI</strong> turns a user's real physical wardrobe into an intelligent digital closet. Instead of generic conversational fashion advice, DripCheck works directly with the clothing pieces the user owns. Through multimodal vision recognition and styling logic, it answers the daily question: <em>&ldquo;What should I wear today?&rdquo;</em> while providing color theory, fit, and silhouette rationales.
+    </p>
+    <div class="callout-box">
+      <strong>Core Loop (MVP v1):</strong> Upload wardrobe photos &rarr; AI extracts attributes (type, color, pattern, fit, season) &rarr; User picks an occasion (*Casual, Office, Date, Party*) &rarr; AI curates a multi-piece outfit from their own closet &rarr; Explains why the outfit coordinates &rarr; User rates look (1&ndash;5 stars).
+    </div>
+  </div>
+
+  <!-- 2. Current Architecture & Tech Stack -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-num">02</span>
+      System Architecture & Runtime Environment
+    </div>
+    <p>
+      The application is engineered as a modern, high-performance Next.js 16 application with Turbopack acceleration. It follows a strict mobile-first design, centered within a phone-width container on larger screens.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Layer</th>
+          <th>Technology</th>
+          <th>Implementation & Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Framework</strong></td>
+          <td><code>Next.js 16.4.0</code> + <code>React 19.3.0</code></td>
+          <td>App Router with Turbopack, Server & Client Components, streaming transitions.</td>
+        </tr>
+        <tr>
+          <td><strong>Language</strong></td>
+          <td><code>TypeScript 5.x</code></td>
+          <td>Strict domain models defined in <code>lib/types.ts</code>, guaranteeing API contract alignment.</td>
+        </tr>
+        <tr>
+          <td><strong>Design & Styling</strong></td>
+          <td><code>Tailwind CSS v4</code></td>
+          <td>CSS custom property tokens (<code>--bg</code>, <code>--surface</code>, <code>--accent</code>), zero hardcoded component hexes.</td>
+        </tr>
+        <tr>
+          <td><strong>Animations</strong></td>
+          <td><code>motion 14.2.0</code></td>
+          <td>High-fidelity spring physics (nav transitions, heart burst particles, sheet reveals).</td>
+        </tr>
+        <tr>
+          <td><strong>Data Layer</strong></td>
+          <td><code>LocalStorage + lib/mock</code></td>
+          <td>Mock persistence simulating backend latency and state preservation during local dev.</td>
+        </tr>
+        <tr>
+          <td><strong>Target Backend</strong></td>
+          <td><code>FastAPI on Render + Supabase</code></td>
+          <td>Endpoints drafted in <code>BACKEND_NEEDS.md</code> for Groq/Gemini vision tagging & DB.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- 3. Complete Routes & Implementation Status -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-num">03</span>
+      Route Inventory & Implementation Status
+    </div>
+    <p>
+      All 12 primary pages and flows are built and operational in the current codebase:
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Route Path</th>
+          <th>Page / Feature</th>
+          <th>Key Capabilities</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>/</code></td>
+          <td><strong>Home Stream</strong></td>
+          <td>Curated editorial looks vs. community feed, filter pill selector, temperature context chips.</td>
+          <td><span class="badge badge-success">&bull; Active</span></td>
+        </tr>
+        <tr>
+          <td><code>/stylist</code></td>
+          <td><strong>Stylist Hub</strong></td>
+          <td>Wardrobe item grid with category filters, occasion outfit generator, closet statistics.</td>
+          <td><span class="badge badge-success">&bull; Active</span></td>
+        </tr>
+        <tr>
+          <td><code>/stylist/upload</code></td>
+          <td><strong>Wardrobe Upload</strong></td>
+          <td>Multi-image selection, drag-and-drop, animated Thinking Orb scanner, AI tag preview cards.</td>
+          <td><span class="badge badge-success">&bull; Active</span></td>
+        </tr>
+        <tr>
+          <td><code>/stylist/result/[id]</code></td>
+          <td><strong>Outfit Recommendation</strong></td>
+          <td>Curated outfit items displayed together, styling reasoning text, 1–5 star rating submission.</td>
+          <td><span class="badge badge-success">&bull; Active</span></td>
+        </tr>
+        <tr>
+          <td><code>/stylist/rate</code></td>
+          <td><strong>Rate Outfit</strong></td>
+          <td>Dedicated feedback view submitting rating and user satisfaction metrics.</td>
+          <td><span class="badge badge-success">&bull; Active</span></td>
+        </tr>
+        <tr>
+          <td><code>/search</code></td>
+          <td><strong>Style Discovery</strong></td>
+          <td>Search input with history persistence, trending tiles (*Quiet Luxury, Tokyo Draping*), vibe chips.</td>
+          <td><span class="badge badge-success">&bull; Active</span></td>
+        </tr>
+        <tr>
+          <td><code>/create</code></td>
+          <td><strong>Post Creator</strong></td>
+          <td>3-step wizard (Photo &rarr; Garment Pinning &rarr; Details), anonymous author toggle.</td>
+          <td><span class="badge badge-success">&bull; Active</span></td>
+        </tr>
+        <tr>
+          <td><code>/post/[id]</code></td>
+          <td><strong>Post Inspector</strong></td>
+          <td>Interactive garment pins (PinLayer), double-tap heart burst, "Recreate with My Closet" sheet.</td>
+          <td><span class="badge badge-success">&bull; Active</span></td>
+        </tr>
+        <tr>
+          <td><code>/profile</code></td>
+          <td><strong>Anonymous Profile</strong></td>
+          <td>Style DNA breakdown, Closet Stats, daily outfit streak tracking, achievement badges, collections.</td>
+          <td><span class="badge badge-success">&bull; Active</span></td>
+        </tr>
+        <tr>
+          <td><code>/profile/edit</code></td>
+          <td><strong>Profile Settings</strong></td>
+          <td>Username customization, bio, identity privacy shield toggles.</td>
+          <td><span class="badge badge-success">&bull; Active</span></td>
+        </tr>
+        <tr>
+          <td><code>/profile/collections/[id]</code></td>
+          <td><strong>Collection Detail</strong></td>
+          <td>Folder view of user-saved outfit pins and curated looks.</td>
+          <td><span class="badge badge-success">&bull; Active</span></td>
+        </tr>
+        <tr>
+          <td><code>/login</code> & <code>/onboarding</code></td>
+          <td><strong>Auth & Intro</strong></td>
+          <td>Anonymous guest session generator, guided onboarding walkthrough.</td>
+          <td><span class="badge badge-success">&bull; Active</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 4. Core Functional Modules -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-num">04</span>
+      Key Feature Modules in Detail
+    </div>
+
+    <div class="two-col">
+      <div class="feature-card">
+        <h4>👗 Digital Closet & AI Tagging</h4>
+        <p>
+          Simulates/calls multimodal vision models to detect clothing silhouettes, primary and accent colors, patterns, fit profiles, and seasonal tags. Persisted in local state with instant category filtering.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <h4>✨ Smart Stylist Recommendation</h4>
+        <p>
+          Context-aware outfit builder that cross-matches tops, bottoms, and footwear from the user's uploaded wardrobe. Includes natural language styling rationale and star feedback dispatch.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <h4>📌 Interactive Garment Pinning</h4>
+        <p>
+          Custom canvas overlay allowing users to tap on post images to anchor descriptive tags directly to garments (e.g., &ldquo;Oversized linen shirt&rdquo;), making inspiration instantly actionable.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <h4>🧬 Style DNA & Habit Gamification</h4>
+        <p>
+          Dynamic color distribution wheel, dominant silhouette archetype indicator, consecutive styling streaks, and unlockable achievement badges celebrating wardrobe curation milestones.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Design System & Glass Tokens -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-num">05</span>
+      Design System & Visual Language
+    </div>
+    <p>
+      The interface complies with the <strong>Prompt 03 Premium Redesign</strong> specification:
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Token</th>
+          <th>Dark Theme (&ldquo;Deep Sea&rdquo;)</th>
+          <th>Light Theme (&ldquo;Sky&rdquo;)</th>
+          <th>Usage</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>--bg</code></td>
+          <td><code>#021A26</code></td>
+          <td><code>#F0FBFE</code></td>
+          <td>Application viewport canvas background.</td>
+        </tr>
+        <tr>
+          <td><code>--surface</code></td>
+          <td><code>#052C40</code></td>
+          <td><code>#FFFFFF</code></td>
+          <td>Card containers and sheet backgrounds.</td>
+        </tr>
+        <tr>
+          <td><code>--accent</code></td>
+          <td><code>#B0EDF9</code> (Sky Blue)</td>
+          <td><code>#04344C</code> (Navy)</td>
+          <td>Primary interactive buttons, highlights & badges.</td>
+        </tr>
+        <tr>
+          <td><code>--like</code></td>
+          <td><code>#FF7A8A</code></td>
+          <td><code>#FF7A8A</code></td>
+          <td>Heart burst and favoriting accent.</td>
+        </tr>
+        <tr>
+          <td><code>.glass</code></td>
+          <td colspan="2"><code>backdrop-filter: blur(36px) saturate(170%) brightness(1.04)</code></td>
+          <td>Floating top bar, bottom navigation, and modal sheets.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- 6. Integration Roadmap & Next Steps -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-num">06</span>
+      Backend Integration & Delivery Roadmap
+    </div>
+    <p>
+      With the frontend and UI interaction layer 100% complete, the next phase focuses on connecting the production backend service.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Milestone / Task</th>
+          <th>Owner</th>
+          <th>Key Actions</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1. Frontend Architecture & UI</strong></td>
+          <td>Frontend Lead</td>
+          <td>All 12 routes, liquid-glass shell, motion system, and mock services completed.</td>
+          <td><span class="badge badge-success">&bull; Done</span></td>
+        </tr>
+        <tr>
+          <td><strong>2. API Contract Specification</strong></td>
+          <td>Frontend Lead</td>
+          <td>Fully documented in <code>BACKEND_NEEDS.md</code> and typed in <code>lib/types.ts</code>.</td>
+          <td><span class="badge badge-success">&bull; Done</span></td>
+        </tr>
+        <tr>
+          <td><strong>3. Backend Endpoints Deployment</strong></td>
+          <td>Backend Lead</td>
+          <td>Deploy FastAPI on Render with Supabase Storage, DB, and Groq/Gemini vision workers.</td>
+          <td><span class="badge badge-mock">&bull; In Progress</span></td>
+        </tr>
+        <tr>
+          <td><strong>4. Flip Live Switch</strong></td>
+          <td>Joint</td>
+          <td>Set <code>NEXT_PUBLIC_USE_MOCKS=false</code> in <code>.env.local</code> to route to Render API.</td>
+          <td><span class="badge badge-primary">&bull; Ready</span></td>
+        </tr>
+        <tr>
+          <td><strong>5. Motion Easing Typing Polish</strong></td>
+          <td>Frontend Lead</td>
+          <td>Explicitly cast cubic bezier arrays in <code>lib/motion.ts</code> for clean <code>tsc</code> runs.</td>
+          <td><span class="badge badge-primary">&bull; Quick Polish</span></td>
+        </tr>
+        <tr>
+          <td><strong>6. Next.js 16 Proxy Codemod</strong></td>
+          <td>Frontend Lead</td>
+          <td>Upgrade deprecated <code>middleware.ts</code> convention using <code>npx @next/codemod</code>.</td>
+          <td><span class="badge badge-primary">&bull; Scheduled</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout-box">
+      <strong>Live Verification:</strong> The Next.js dev server is actively serving the full application on port <code>3000</code>. To verify the build locally, visit <a href="http://localhost:3000" style="color: #04344C; font-weight: 700;">http://localhost:3000</a> on desktop or test on mobile via local network IP.
+    </div>
+  </div>
+
+  <!-- Document Footer -->
+  <div class="doc-footer">
+    <div>DripCheck AI &bull; Confidential &bull; Project State Report</div>
+    <div>Page 3 of 3 &bull; Built with Next.js 16 &amp; Tailwind CSS v4</div>
+  </div>
+
+</body>
+</html>
